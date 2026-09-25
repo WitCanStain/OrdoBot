@@ -40,4 +40,47 @@ const approveUser = async (user_id, cmd_user_id) => {
     
 }
 
-module.exports = { approveUser }
+const moveToReserve = async (message_id, channel_id, cmd_user_id) => {
+    try {
+        const guild = client.guilds.cache.get(process.env.GUILD_ID);
+        let cmd_member = await guild.members.fetch(cmd_user_id);
+        
+        if (!cmd_member.roles.cache.has(process.env.GRAND_COUNCIL_ROLE_ID)) {
+            return { success: false, error: 'User does not have the GRAND_COUNCIL_ROLE_ID permission.' };
+        }
+
+        const channel = await guild.channels.fetch(channel_id);
+        const message = await channel.messages.fetch(message_id);
+        
+        // Collect all users who reacted
+        const reactedUsers = new Set();
+        for (const reaction of message.reactions.cache.values()) {
+            const users = await reaction.users.fetch();
+            users.forEach(user => reactedUsers.add(user.id));
+        }
+
+        await guild.members.fetch(); // Ensure all members are cached
+
+        const memberRoleId = process.env.MEMBER_ROLE_ID;
+        const reserveRoleId = process.env.RESERVE_ROLE_ID;
+
+        const membersToMove = guild.members.cache.filter(member =>
+            member.roles.cache.has(memberRoleId) && !reactedUsers.has(member.id)
+        );
+
+        // Tie each member's remove+add together so partial failures don't get miscounted as success
+        const results = await Promise.allSettled(
+            membersToMove.map(member => member.roles.remove(memberRoleId).then(() => member.roles.add(reserveRoleId)))
+        );
+
+        const movedCount = results.filter(r => r.status === 'fulfilled').length;
+        const failedCount = results.length - movedCount;
+
+        return { success: true, count: movedCount, failedCount };
+    } catch (e) {
+        console.error(e);
+        return { success: false, error: e.message };
+    }
+}
+
+module.exports = { approveUser, moveToReserve }
