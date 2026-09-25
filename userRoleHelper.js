@@ -23,7 +23,8 @@ const approveUser = async (user_id, cmd_user_id) => {
         const initiate_role = member.guild.roles.cache.find(role => role.id == process.env.INITIATE_ROLE_ID);
         const visitor_role = member.guild.roles.cache.find(role => role.id == process.env.VISITOR_ROLE_ID);
         const applicant_role = member.guild.roles.cache.find(role => role.id == process.env.APPLICANT_ROLE_ID);
-        for (const role_to_add of [assignment_role, accolades_role, rank_role, medals_role, misc_role, member_role, initiate_role]) {
+        const active_role = member.guild.roles.cache.find(role => role.id == process.env.ACTIVE_ROLE_ID);
+        for (const role_to_add of [assignment_role, accolades_role, rank_role, medals_role, misc_role, member_role, initiate_role, active_role]) {
             if (role_to_add) promises.push(member.roles.add(role_to_add));
         }
         promises.push(member.roles.remove(visitor_role))
