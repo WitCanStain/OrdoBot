@@ -24,7 +24,7 @@ Have a read through the rules of the Order and the server [here](https://discord
 
 For general guidance on the game, see the <#1549762304462159912> channel.
 
-You can give yourself ping roles in the <#1090888360802930718>.
+You can give yourself ping roles in <#1090888360802930718>.
 
 Finally, remember to introduce yourself in <#1092133606362722450>!`
             });
