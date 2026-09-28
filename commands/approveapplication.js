@@ -22,7 +22,11 @@ You are now a levy, a provisional member. By attending events and contributing t
 
 Have a read through the rules of the Order and the server [here](https://discord.com/channels/1090571033712541706/1090908358481035345/1091035786717175928) if you haven't already.
 
-For general guidance on the game, see the <#1549762304462159912> channel.`
+For general guidance on the game, see the <#1549762304462159912> channel.
+
+You can give yourself ping roles in the <#1090888360802930718>.
+
+Finally, remember to introduce yourself in <#1092133606362722450>!`
             });
         }
         await interaction.followUp({content:res?'User successfully approved':'Error occurred, approving failed.', ephemeral:true});
