@@ -1,5 +1,7 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { approveUser } = require('../userRoleHelper.js');
+
+const ORDER_PLAN_IMAGE_URL = 'https://cdn.discordapp.com/attachments/1549112173194780772/1549112388639395912/orderplan1.png?ex=6aa982d6&is=6aa83156&hm=1798889409b12cc2cd9b79a6f7a11451755ac8988c2c9b2fc71803b3b01f240e&';
 module.exports = {
     data: new SlashCommandBuilder()
     .setName('approve_join')
@@ -13,10 +15,10 @@ module.exports = {
         const user_id = interaction.options.getString('user_id');
         let res = await approveUser(user_id, interaction.user.id);
         if (res) {
-            await interaction.channel.send({ content: 
-            `Welcome to the Order, <@${user_id}>. Your application has been approved!
-
-Please have a look at [this](https://cdn.discordapp.com/attachments/1549112173194780772/1549112388639395912/orderplan1.png?ex=6aa982d6&is=6aa83156&hm=1798889409b12cc2cd9b79a6f7a11451755ac8988c2c9b2fc71803b3b01f240e&) overview of the Order's structure and progression system. You can find in-depth information about how the Order is organised [here](https://discord.com/channels/1090571033712541706/1549110186827059373/1549111780213530706), but you don't need to worry about the rest of it for now. For now, your main task is to just play the game and join us for events.
+            const embed = new EmbedBuilder()
+                .setColor('Green')
+                .setDescription(
+                `Please have a look at [this overview](${ORDER_PLAN_IMAGE_URL}) of the Order's structure and progression system. You can find in-depth information about how the Order is organised [here](https://discord.com/channels/1090571033712541706/1549110186827059373/1549111780213530706), but you don't need to worry about the rest of it for now. For now, your main task is to just play the game and join us for events.
 
 You are now a levy, a provisional member. By attending events and contributing to the clan, you will reach the rank of Templar and become a full member. When you do, you are expected to choose an assignment in the military. You will also be able to choose whether you want to focus on the military, logistics, community service, or all three.
 
@@ -26,7 +28,11 @@ For general guidance on the game, see the <#1549762304462159912> channel.
 
 You can give yourself ping roles in <#1090888360802930718>.
 
-Finally, remember to introduce yourself in <#1092133606362722450>!`
+Finally, remember to introduce yourself in <#1092133606362722450>!`)
+                .setImage(ORDER_PLAN_IMAGE_URL);
+            await interaction.channel.send({
+                content: `Welcome to the Order, <@${user_id}>. Your application has been approved!`,
+                embeds: [embed]
             });
         }
         await interaction.followUp({content:res?'User successfully approved':'Error occurred, approving failed.', ephemeral:true});
